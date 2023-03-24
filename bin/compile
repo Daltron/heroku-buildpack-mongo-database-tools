@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+####### Configure environment
+
+set -o errexit    # always exit on error
+set -o pipefail   # don't ignore exit codes when piping output
+set -o posix      # more strict failures in subshells
+# set -x          # enable debugging
+
+# Configure directories
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+HEROKU_DIR=$BUILD_DIR/.heroku
+
+DIR_NAME="mongo_database_tools"
+mkdir -p $HEROKU_DIR/$DIR_NAME
+warnings=$(mktemp)
+
+# Install mongodb database tools
+VERSION=100.7.0
+echo "Downloading and installing mongodb database tools version $VERSION"
+BASE_FILE_NAME="mongodb-database-tools-ubuntu2204-x86_64-${VERSION}"
+download_url="https://fastdl.mongodb.org/tools/db/${BASE_FILE_NAME}.tgz"
+curl $download_url -s -o - | tar xzf - -C /tmp
+
+# Move binaries into the app directory
+mv /tmp/${BASE_FILE_NAME}/* $HEROKU_DIR/$DIR_NAME
+chmod +x $HEROKU_DIR/$DIR_NAME/bin/*
+
+echo "Creating run-time environment"
+mkdir -p $BUILD_DIR/.profile.d
+
+for filename in $BUILD_DIR/.profile.d/*.sh; do
+  echo "Installing database tool: $filename"
+  echo "export PATH=\"\$HOME/.heroku/$DIR_NAME/bin:\$PATH\"" > $BUILD_DIR/.profile.d/$filename
+done

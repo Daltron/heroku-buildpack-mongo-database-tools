@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# bin/detect <build-dir>
+
+echo "Heroku Buildpack - Mongo Database Tools"
+exit 0
