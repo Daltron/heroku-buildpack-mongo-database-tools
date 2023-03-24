@@ -33,6 +33,6 @@ mkdir -p $BUILD_DIR/.profile.d
 
 tools=("bsondump", "mongodump", "mongoexport", "mongofiles", "mongoimport", "mongorestore", "mongostat", "mongotop")
 for filename in ${tools[@]}; do
-  echo "Installing database tool: $filename"
+  echo "Installing mongo database tool: $filename"
   echo "export PATH=\"\$HOME/.heroku/$DIR_NAME/bin:\$PATH\"" > $BUILD_DIR/.profile.d/$filename.sh
 done
